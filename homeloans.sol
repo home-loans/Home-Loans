@@ -154,9 +154,4 @@ contract HomeLoansToken is owned {
     function allowance(address _owner, address _spender) constant returns(uint remaining) {
         return allowed[_owner][_spender];
     }
-
-    /// @dev Withdraw all owner
-    function withdraw() onlyOwner {
-        msg.sender.transfer(this.balance);
-    }
 }
