@@ -56,13 +56,11 @@ contract HomeLoansToken is owned {
     using SafeMath
     for uint256;
 
-    uint public PRICE = 100;
-    uint public exchangeRate = 45000;
     string public name;
     string public symbol;
     uint public decimals;
     uint256 public totalSupply;
-    bool public release = false;
+  
 
     /// @dev Fix for the ERC20 short address attack http://vessenes.com/the-erc20-short-address-attack-explained/
     /// @param size payload size
@@ -135,46 +133,6 @@ contract HomeLoansToken is owned {
         balanceOf[owner] = balanceOf[owner].sub(destroyAmount);
         totalSupply = totalSupply.sub(destroyAmount);
 
-    }
-
-    /// @dev Change price for 1 tokens
-    function setPrice(uint Price) onlyOwner {
-        require(Price > 0);
-        PRICE = Price;
-    }
-
-    /// @dev Set status passing ICO
-    function setRelease(bool Release) onlyOwner {
-        release = Release;
-    }
-
-    /// @dev Change ETH|USD Rate in Cents
-    function setExchangeRate(uint ExchangeRate) onlyOwner {
-        require(ExchangeRate > 0);
-        exchangeRate = ExchangeRate;
-    }
-
-
-    function buy() payable {
-        require(!release);
-        var multiplier = 10 ** decimals;
-        uint amount = weiToUsdCents(msg.value).mul(multiplier.div(PRICE));
-        require(balanceOf[owner] > amount);
-        balanceOf[msg.sender] = balanceOf[msg.sender].add(amount);
-        balanceOf[owner] = balanceOf[owner].sub(amount);
-        Transfer(owner, msg.sender, amount);
-    }
-
-    /// @dev Wei value convert to USD cents according to current exchange rate
-    /// @param weiValue wei value to convert
-    /// @return USD cents equivalent of the wei value
-    function weiToUsdCents(uint weiValue) private returns(uint) {
-        return weiValue.mul(exchangeRate).div(1e18);
-    }
-
-
-    function() payable {
-        buy();
     }
 
     /// @dev Approve transfer
